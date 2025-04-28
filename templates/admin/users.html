@@ -1,0 +1,265 @@
+{% extends "layout.html" %}
+
+{% block title %}User Management | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-users me-2"></i> User Management</h2>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exportModal">
+                <i class="fas fa-file-export me-1"></i> Export
+            </button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                <i class="fas fa-user-plus me-1"></i> Invite User
+            </button>
+        </div>
+    </div>
+    
+    <!-- Admin Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                <i class="fas fa-home me-1"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_analytics') }}">
+                <i class="fas fa-chart-bar me-1"></i> Analytics
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('admin_users') }}">
+                <i class="fas fa-users me-1"></i> Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_internships') }}">
+                <i class="fas fa-briefcase me-1"></i> Internships
+            </a>
+        </li>
+    </ul>
+    
+    <!-- Filters and Search -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search users..." aria-label="Search users">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Filter by status">
+                        <option selected>Filter by Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Sort by">
+                        <option selected>Sort By</option>
+                        <option value="name_asc">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="date_joined_desc">Newest First</option>
+                        <option value="date_joined_asc">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Users Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="selectAll">
+                                    <label class="form-check-label" for="selectAll"></label>
+                                </div>
+                            </th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Full Name</th>
+                            <th>Major</th>
+                            <th>University</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="user{{ user.id }}">
+                                    <label class="form-check-label" for="user{{ user.id }}"></label>
+                                </div>
+                            </td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.profile.full_name if user.profile and user.profile.full_name else '-' }}</td>
+                            <td>{{ user.profile.major if user.profile and user.profile.major else '-' }}</td>
+                            <td>{{ user.profile.university if user.profile and user.profile.university else '-' }}</td>
+                            <td>{{ user.created_at.strftime('%B %d, %Y') }}</td>
+                            <td>
+                                {% if user.profile and user.profile.profile_completed %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-warning">Incomplete</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown{{ user.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="actionDropdown{{ user.id }}">
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> View Profile</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-envelope me-2"></i> Send Message</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash-alt me-2"></i> Delete</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exportModalLabel">Export User Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Export Format</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="exportFormat" id="formatCSV" value="csv" checked>
+                                <label class="form-check-label" for="formatCSV">CSV</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="exportFormat" id="formatExcel" value="excel">
+                                <label class="form-check-label" for="formatExcel">Excel</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data to Export</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="exportBasic" checked>
+                                <label class="form-check-label" for="exportBasic">Basic Information</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="exportProfile" checked>
+                                <label class="form-check-label" for="exportProfile">Profile Details</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="exportInternships">
+                                <label class="form-check-label" for="exportInternships">Internship Progress</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="exportCertificates">
+                                <label class="form-check-label" for="exportCertificates">Certificates</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Invite User Modal -->
+    <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inviteModalLabel">Invite New Users</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="inviteEmails" class="form-label">Email Addresses</label>
+                            <textarea class="form-control" id="inviteEmails" rows="4" placeholder="Enter email addresses (one per line)"></textarea>
+                            <div class="form-text">Separate multiple email addresses with line breaks.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="inviteMessage" class="form-label">Invitation Message (Optional)</label>
+                            <textarea class="form-control" id="inviteMessage" rows="3" placeholder="Add a personalized message to your invitation"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">User Role</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userRole" id="roleStudent" value="student" checked>
+                                <label class="form-check-label" for="roleStudent">Student</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userRole" id="roleAdmin" value="admin">
+                                <label class="form-check-label" for="roleAdmin">Admin</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Send Invitations</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select All Checkbox
+        const selectAllCheckbox = document.getElementById('selectAll');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('tbody .form-check-input');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

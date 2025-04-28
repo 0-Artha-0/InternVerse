@@ -1,0 +1,320 @@
+{% extends "layout.html" %}
+
+{% block title %}Analytics | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-chart-bar me-2"></i> Analytics Dashboard</h2>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary">Last 7 Days</button>
+            <button type="button" class="btn btn-primary">Last 30 Days</button>
+            <button type="button" class="btn btn-outline-secondary">Last 90 Days</button>
+        </div>
+    </div>
+    
+    <!-- Admin Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                <i class="fas fa-home me-1"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('admin_analytics') }}">
+                <i class="fas fa-chart-bar me-1"></i> Analytics
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_users') }}">
+                <i class="fas fa-users me-1"></i> Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_internships') }}">
+                <i class="fas fa-briefcase me-1"></i> Internships
+            </a>
+        </li>
+    </ul>
+    
+    <!-- Key Metrics Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-4">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase">Completion Rate</h6>
+                            <h2 class="mb-0">78%</h2>
+                        </div>
+                        <i class="fas fa-check-circle fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><i class="fas fa-arrow-up me-1"></i> 5% from last month</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase">Avg. Task Score</h6>
+                            <h2 class="mb-0">84/100</h2>
+                        </div>
+                        <i class="fas fa-star fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><i class="fas fa-arrow-up me-1"></i> 2% from last month</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase">Active Users</h6>
+                            <h2 class="mb-0" id="active-users-count">42</h2>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><i class="fas fa-arrow-up me-1"></i> 12% from last month</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card bg-warning text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase">Task Submissions</h6>
+                            <h2 class="mb-0" id="task-submissions-count">156</h2>
+                        </div>
+                        <i class="fas fa-tasks fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small><i class="fas fa-arrow-up me-1"></i> 8% from last month</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- User Engagement Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold">User Engagement Over Time</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">View Options:</div>
+                            <a class="dropdown-item" href="#">Daily</a>
+                            <a class="dropdown-item" href="#">Weekly</a>
+                            <a class="dropdown-item" href="#">Monthly</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="userEngagementChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Industry Distribution -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">Popular Industries</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="industryDistributionChart" 
+                                data-names="{{ industry_data|map(attribute='name')|list|tojson }}" 
+                                data-counts="{{ industry_data|map(attribute='count')|list|tojson }}" 
+                                height="250"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        {% for industry in industry_data %}
+                        <span class="me-2">
+                            <i class="fas fa-circle 
+                                {% if loop.index0 == 0 %}text-primary
+                                {% elif loop.index0 == 1 %}text-success
+                                {% elif loop.index0 == 2 %}text-info
+                                {% else %}text-warning{% endif %}"></i> {{ industry.name }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Task Status Distribution -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">Task Status Distribution</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="taskStatusChart" 
+                                data-statuses="{{ task_data|map(attribute='status')|list|tojson }}" 
+                                data-counts="{{ task_data|map(attribute='count')|list|tojson }}" 
+                                height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Retention -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold">User Retention</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="userRetentionChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Task Completion Time -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold">Average Task Completion Time (Days)</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">View Options:</div>
+                            <a class="dropdown-item" href="#">By Industry</a>
+                            <a class="dropdown-item" href="#">By Difficulty</a>
+                            <a class="dropdown-item" href="#">By University</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Task Type</th>
+                                    <th>Easy</th>
+                                    <th>Medium</th>
+                                    <th>Hard</th>
+                                    <th>Overall</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fintech</td>
+                                    <td>1.2</td>
+                                    <td>2.5</td>
+                                    <td>4.3</td>
+                                    <td>2.7</td>
+                                </tr>
+                                <tr>
+                                    <td>Healthcare</td>
+                                    <td>1.5</td>
+                                    <td>3.1</td>
+                                    <td>5.2</td>
+                                    <td>3.3</td>
+                                </tr>
+                                <tr>
+                                    <td>Marketing</td>
+                                    <td>1.0</td>
+                                    <td>2.3</td>
+                                    <td>3.8</td>
+                                    <td>2.4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // User Engagement Chart
+        const engagementCtx = document.getElementById('userEngagementChart');
+        if (engagementCtx) {
+            new Chart(engagementCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
+                    datasets: [{
+                        label: 'Logins',
+                        data: [65, 72, 86, 81, 90, 95, 87, 92],
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                        fill: true
+                    }, {
+                        label: 'Task Submissions',
+                        data: [45, 55, 65, 61, 68, 73, 62, 70],
+                        borderColor: 'rgba(28, 200, 138, 1)',
+                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        // User Retention Chart
+        const retentionCtx = document.getElementById('userRetentionChart');
+        if (retentionCtx) {
+            new Chart(retentionCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [{
+                        label: 'User Retention (%)',
+                        data: [100, 85, 76, 68, 62, 58],
+                        backgroundColor: 'rgba(54, 185, 204, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

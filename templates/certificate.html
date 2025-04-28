@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block title %}Certificate | Virtual Internship Simulator{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <div class="certificate-container">
+                        <div class="certificate-header">
+                            <h1 class="certificate-title">{{ certificate.title }}</h1>
+                            <p class="lead">Certificate ID: VINT-{{ certificate.id }}-{{ certificate.issued_at.strftime('%Y%m%d') }}</p>
+                        </div>
+                        
+                        <div class="certificate-content">
+                            <p class="fs-5">This is to certify that</p>
+                            <h2 class="mb-4">{{ current_user.profile.full_name }}</h2>
+                            <p class="fs-5 mb-4">has successfully completed the virtual internship program</p>
+                            <h3 class="mb-4">{{ internship.title }}</h3>
+                            <p>{{ certificate.description }}</p>
+                        </div>
+                        
+                        <div class="certificate-seal">
+                            <i class="fas fa-certificate fa-4x text-primary"></i>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Skills Acquired</h5>
+                                <ul>
+                                    {% for skill in certificate.skills_acquired.split(',') %}
+                                        <li>{{ skill.strip() }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Assessment Results</h5>
+                                <p><strong>Overall Score:</strong> {{ certificate.score }}/100</p>
+                            </div>
+                        </div>
+                        
+                        <div class="certificate-footer">
+                            <div>
+                                <p><strong>Issued Date:</strong> {{ certificate.issued_at.strftime('%B %d, %Y') }}</p>
+                            </div>
+                            <div>
+                                <p><strong>Virtual Internship Simulator</strong><br>AI-Powered Professional Training</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="btn btn-primary me-2" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i> Print Certificate
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Certificate Verification Information -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i> Certificate Verification</h5>
+                </div>
+                <div class="card-body">
+                    <p>This certificate can be verified by potential employers or educational institutions using the unique certificate ID:</p>
+                    <div class="alert alert-info">
+                        <strong>Certificate ID:</strong> VINT-{{ certificate.id }}-{{ certificate.issued_at.strftime('%Y%m%d') }}
+                    </div>
+                    <p>The skills and knowledge reflected in this certificate were developed through a series of AI-generated professional tasks and evaluated based on industry standards.</p>
+                    
+                    <div class="mt-4">
+                        <h6>About Virtual Internship Simulator</h6>
+                        <p>Virtual Internship Simulator provides AI-powered professional training experiences that simulate real-world work environments. Our platform helps students develop practical skills through customized industry-specific projects.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .certificate-container, .certificate-container * {
+            visibility: visible;
+        }
+        .certificate-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 40px;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,101 @@
+/* Fixes for black backgrounds and white-on-white text */
+
+/* Global background fix */
+body, html {
+    background-color: #f8f9fc !important;
+    color: #333333 !important;
+}
+
+/* Card backgrounds */
+.card {
+    background-color: #ffffff !important;
+}
+
+.card-body {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* Footer fix */
+footer {
+    background-color: #4e73df !important;
+    color: #ffffff !important;
+}
+
+footer h3, footer p {
+    color: #ffffff !important;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+footer a:hover {
+    color: #ffffff !important;
+}
+
+/* Chat bubble fixes */
+.message.user {
+    background-color: #4e73df !important;
+    color: #ffffff !important;
+}
+
+.message.user p, .message.user span {
+    color: #ffffff !important;
+}
+
+.message.bot {
+    background-color: #f0f2f5 !important;
+    color: #333333 !important;
+}
+
+.message.bot p, .message.bot span {
+    color: #333333 !important;
+}
+
+/* Navbar text */
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Dropdown menus */
+.dropdown-menu {
+    background-color: #ffffff !important;
+}
+
+.dropdown-item {
+    color: #333333 !important;
+}
+
+/* Table backgrounds */
+.table {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* Modal backgrounds */
+.modal-content {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* Button text */
+.btn {
+    color: #ffffff !important;
+}
+
+.btn-light, .btn-outline-light {
+    color: #333333 !important;
+}
+
+/* Form controls */
+.form-control {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}
+
+/* List group items */
+.list-group-item {
+    background-color: #ffffff !important;
+    color: #333333 !important;
+}

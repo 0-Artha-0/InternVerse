@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternVerse - Virtual Internship Experience</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            /* Color palette from image */
+            --blue: #45a6ff;
+            --light-blue: #a8d5ff;
+            --peach: #ffe8d1;
+            --orange: #ff914d;
+            --dark: #333333;
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --gray: #6c757d;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: var(--blue);
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Utility Classes */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3a8ad9;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--orange);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ea8344;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--blue);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--peach);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--white);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--peach);
+        }
+
+        .nav-links .btn {
+            background-color: var(--orange);
+            color: white;
+        }
+
+        .nav-links .btn:hover {
+            background-color: #ea8344;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 10rem 0 7rem;
+            background: var(--blue);
+            color: white;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--white);
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Features */
+        .features {
+            padding: 5rem 0;
+            background-color: var(--light-blue);
+        }
+
+        .features-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-img {
+            height: 200px;
+            background-color: var(--peach);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-img img {
+            max-width: 80px;
+            max-height: 80px;
+            object-fit: contain;
+        }
+
+        .feature-content {
+            padding: 1.5rem;
+        }
+
+        .feature-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--blue);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background-color: var(--peach);
+            padding: 5rem 0;
+        }
+
+        .testimonial-heading {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .testimonial-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            max-width: 350px;
+            border-top: 4px solid var(--blue);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--light-blue);
+            margin-right: 1rem;
+        }
+
+        .author-info h4 {
+            margin-bottom: 0.2rem;
+        }
+
+        .author-info p {
+            color: var(--gray);
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Call to Action */
+        .cta {
+            padding: 5rem 0;
+            background-color: var(--orange);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            color: white;
+        }
+
+        .cta p {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta .btn {
+            background-color: white;
+            color: var(--orange);
+        }
+
+        .cta .btn:hover {
+            background-color: var(--peach);
+            color: var(--orange);
+        }
+
+        /* Programs Section */
+        .programs {
+            padding: 5rem 0;
+            background-color: var(--white);
+        }
+
+        .programs-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .programs-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .program-item {
+            background-color: var(--light-blue);
+            border-radius: 8px;
+            padding: 1.5rem;
+            width: 230px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .program-item:hover {
+            transform: scale(1.05);
+            background-color: var(--blue);
+            color: white;
+        }
+
+        .program-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--orange);
+        }
+
+        .program-item:hover .program-icon {
+            color: var(--peach);
+        }
+
+        .program-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--blue);
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-column h3 {
+            color: white;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--peach);
+        }
+
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none; /* Mobile menu would need JavaScript, using simple display none for demo */
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                margin-bottom: 1rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <a href="#" class="logo">Intern<span>Verse</span></a>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Programs</a></li>
+                <li><a href="#">How It Works</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#" class="btn">Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Step Into Your Future Career Today</h1>
+                <p>InternVerse provides immersive virtual internship experiences that build real-world skills, expand your portfolio, and boost your employability.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-secondary">Explore Programs</a>
+                    <a href="#" class="btn btn-primary">Start Free Trial</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section class="programs">
+        <div class="container">
+            <div class="programs-title">
+                <h2>Discover Your Path</h2>
+                <p>Explore our diverse range of industry-specific virtual internship programs</p>
+            </div>
+            <div class="programs-list">
+                <div class="program-item">
+                    <div class="program-icon">💻</div>
+                    <div class="program-name">Software Development</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">📊</div>
+                    <div class="program-name">Data Science</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">📱</div>
+                    <div class="program-name">Digital Marketing</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">💰</div>
+                    <div class="program-name">Finance</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">🎨</div>
+                    <div class="program-name">Graphic Design</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">🔬</div>
+                    <div class="program-name">Healthcare</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">⚖️</div>
+                    <div class="program-name">Legal</div>
+                </div>
+                <div class="program-item">
+                    <div class="program-icon">🌐</div>
+                    <div class="program-name">View All</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <div class="features-title">
+                <h2>How InternVerse Works</h2>
+                <p>Get industry experience in a structured, supportive online environment</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-img">
+                        <img src="/api/placeholder/80/80" alt="Select Industry">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Choose Your Path</h3>
+                        <p>Browse and select from over 25 virtual internships across various industries and specializations.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">
+                        <img src="/api/placeholder/80/80" alt="Complete Projects">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Work on Real Projects</h3>
+                        <p>Complete industry-relevant tasks and projects designed by professionals to reflect actual workplace challenges.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">
+                        <img src="/api/placeholder/80/80" alt="Get Feedback">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Get Expert Guidance</h3>
+                        <p>Receive detailed feedback and mentorship from industry professionals on your completed work.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-img">
+                        <img src="/api/placeholder/80/80" alt="Build Portfolio">
+                    </div>
+                    <div class="feature-content">
+                        <h3>Showcase Your Skills</h3>
+                        <p>Build a portfolio of completed projects and earn credentials that demonstrate your abilities to employers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="testimonial-heading">
+                <h2>Success Stories</h2>
+                <p>Hear from students who transformed their careers with InternVerse</p>
+            </div>
+            <div class="testimonial-cards">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"After completing the digital marketing internship, I had concrete examples of campaigns I'd created to show during interviews. This led directly to my first job!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>Taylor Morgan</h4>
+                            <p>Social Media Strategist</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The web development program taught me practical skills I wasn't learning in my CS classes. I built a full portfolio that impressed multiple employers."</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>Marcus Lee</h4>
+                            <p>Frontend Developer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"As a career-changer, InternVerse gave me the industry experience I needed to make a successful transition into the financial sector."</p>
+                    <div class="testimonial-author">
+                        <div class="author-img"></div>
+                        <div class="author-info">
+                            <h4>Priya Sharma</h4>
+                            <p>Financial Analyst</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta">
+        <div class="container">
+            <h2>Start Your Career Journey Today</h2>
+            <p>Join thousands of students gaining valuable industry experience through InternVerse's virtual internship programs.</p>
+            <a href="#" class="btn">Get Started For Free</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>InternVerse</h3>
+                    <p>Transforming education by bridging the gap between classroom learning and workplace experience.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Programs</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Technology</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Creative Arts</a></li>
+                        <li><a href="#">Healthcare</a></li>
+                        <li><a href="#">Science & Research</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Career Blog</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                        <li><a href="#">Industry Insights</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Student Community</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Our Team</a></li>
+                        <li><a href="#">Partner With Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 InternVerse. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

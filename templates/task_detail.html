@@ -1,0 +1,400 @@
+{% extends "layout.html" %}
+
+{% block title %}Task Details | Virtual Internship Simulator{% endblock %}
+
+{% block styles %}
+<style>
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+        border: 1px solid var(--bs-border-color);
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .message {
+        max-width: 80%;
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 1rem;
+        position: relative;
+    }
+    
+    .message p {
+        margin-bottom: 0;
+    }
+    
+    .user-message {
+        align-self: flex-end;
+        background-color: #007bff;
+        color: #fff;
+        border-bottom-right-radius: 0.25rem;
+    }
+    
+    .bot-message {
+        align-self: flex-start;
+        background-color: #f1f1f1;
+        color: #333;
+        border-bottom-left-radius: 0.25rem;
+    }
+    
+    .bot-message.thinking {
+        background-color: #f8f9fa;
+        font-style: italic;
+    }
+    
+    .bot-message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .chat-input-container {
+        padding: 1rem;
+        border-top: 1px solid var(--bs-border-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Task Detail Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">{{ task.title }}</h4>
+                        <span class="badge bg-light text-dark">
+                            {{ task.status.replace('_', ' ').title() }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Description</h5>
+                        <p>{{ task.description }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5>Instructions</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                {{ task.instructions|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Difficulty</h6>
+                                    <span class="badge bg-{{ 'success' if task.difficulty == 'easy' else 'warning' if task.difficulty == 'medium' else 'danger' }} fs-6">
+                                        {{ task.difficulty.title() }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Points</h6>
+                                    <span class="badge bg-info fs-6">{{ task.points }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Deadline</h6>
+                                    <p class="mb-0 small">
+                                        No deadline set
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if task.status != 'evaluated' %}
+                    <!-- Task Submission Form -->
+                    <form id="task-submission-form" method="POST" action="{{ url_for('task_detail', task_id=task.id) }}" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <h5>Your Submission</h5>
+                            <textarea class="form-control" id="content" name="content" rows="10" placeholder="Enter your submission here..." {% if task.status == 'submitted' %}disabled{% endif %}>{% if submission %}{{ submission.content }}{% endif %}</textarea>
+                            <small class="text-muted">For best results, provide a thorough, well-structured response.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="attachments" class="form-label">Attachments (Optional)</label>
+                            <input class="form-control" type="file" id="attachments" name="attachments" multiple {% if task.status == 'submitted' %}disabled{% endif %}>
+                            <small class="text-muted">You can upload multiple files if needed. Supported formats: PDF, DOCX, XLSX, PPTX, JPG, PNG.</small>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            {% if task.status != 'submitted' %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Solution
+                            </button>
+                            {% else %}
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i> Your submission is being evaluated. Results will be available soon.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                    {% endif %}
+                    
+                    {% if submission %}
+                    <!-- Previous Submissions -->
+                    <div class="mt-5">
+                        <h5>Your Submission</h5>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>Submitted: {% if submission.submitted_at %}{{ submission.submitted_at.strftime('%B %d, %Y %H:%M') }}{% else %}Just now{% endif %}</span>
+                                {% if submission.score %}
+                                <span class="badge bg-{{ 'success' if submission.score >= 80 else 'warning' if submission.score >= 60 else 'danger' }}">
+                                    Score: {{ submission.score }}/100
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">Evaluating</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h6>Your Submission:</h6>
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body">
+                                        <p class="mb-0">{{ submission.content }}</p>
+                                    </div>
+                                </div>
+                                
+                                {% if submission.file_urls %}
+                                <h6>Attached Files:</h6>
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body">
+                                        <div class="list-group list-group-flush">
+                                            {% for file_url in submission.file_urls.split(',') %}
+                                                {% if file_url.strip() %}
+                                                    {% set file_name = file_url.split('/')[-1] %}
+                                                    <div class="list-group-item d-flex justify-content-between align-items-center p-2">
+                                                        <span>
+                                                            {% if file_name.lower().endswith('.pdf') %}
+                                                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                            {% elif file_name.lower().endswith('.docx') or file_name.lower().endswith('.doc') %}
+                                                                <i class="fas fa-file-word text-primary me-2"></i>
+                                                            {% elif file_name.lower().endswith('.xlsx') or file_name.lower().endswith('.xls') %}
+                                                                <i class="fas fa-file-excel text-success me-2"></i>
+                                                            {% elif file_name.lower().endswith('.pptx') or file_name.lower().endswith('.ppt') %}
+                                                                <i class="fas fa-file-powerpoint text-warning me-2"></i>
+                                                            {% elif file_name.lower().endswith('.jpg') or file_name.lower().endswith('.jpeg') or file_name.lower().endswith('.png') %}
+                                                                <i class="fas fa-file-image text-info me-2"></i>
+                                                            {% else %}
+                                                                <i class="fas fa-file text-secondary me-2"></i>
+                                                            {% endif %}
+                                                            {{ file_name }}
+                                                        </span>
+                                                        <a href="{{ file_url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                            <i class="fas fa-download"></i> Download
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                {% if submission.feedback %}
+                                <h6>AI Supervisor Feedback:</h6>
+                                <div class="card border-primary mb-0">
+                                    <div class="card-body">
+                                        <p class="mb-0">{{ submission.feedback }}</p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <!-- AI Supervisor Chat -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-robot me-2"></i> AI Supervisor</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="ai-supervisor-chat" class="chat-container" data-internship-id="{{ internship.id }}" data-task-id="{{ task.id }}">
+                        <div id="chat-messages" class="chat-messages">
+                            <!-- Initial welcome message -->
+                            <div class="message bot-message">
+                                <p>Hello! I'm your AI supervisor for this internship. How can I help you with this task?</p>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <form id="chat-form" class="d-flex">
+                                <input type="text" id="chat-input" class="form-control" placeholder="Ask about this task...">
+                                <button type="submit" class="btn btn-primary ms-2">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Helpful Resources -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-book me-2"></i> Helpful Resources</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% if resources and resources|length > 0 %}
+                            {% for resource in resources %}
+                                <li class="list-group-item">
+                                    {% set icon = 'file-alt' %}
+                                    {% if resource.type == 'video' or resource.type == 'tutorial' %}
+                                        {% set icon = 'video' %}
+                                    {% elif resource.type == 'article' %}
+                                        {% set icon = 'newspaper' %}
+                                    {% elif resource.type == 'course' %}
+                                        {% set icon = 'graduation-cap' %}
+                                    {% elif resource.type == 'documentation' %}
+                                        {% set icon = 'book' %}
+                                    {% endif %}
+                                    
+                                    <i class="fas fa-{{ icon }} text-primary me-2"></i>
+                                    <a href="{{ resource.url|default('#') }}" target="_blank">{{ resource.title }}</a>
+                                    {% if resource.description %}
+                                        <p class="small text-muted mb-0">{{ resource.description }}</p>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item">
+                                <div class="alert alert-info mb-0">
+                                    <p class="mb-0"><i class="fas fa-info-circle me-2"></i> Resources related to this task will appear here.</p>
+                                </div>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('internship_detail', internship_id=internship.id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to All Tasks
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Automatically focus submission textarea if the task is not submitted yet
+        {% if task.status != 'submitted' and task.status != 'evaluated' %}
+        const contentField = document.getElementById('content');
+        if (contentField) {
+            contentField.focus();
+        }
+        {% endif %}
+        
+        // AI Supervisor Chat
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        
+        if (chatForm && chatInput && chatMessages) {
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const question = chatInput.value.trim();
+                if (!question) return;
+                
+                // Add user message to chat
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.innerHTML = `<p>${question}</p>`;
+                chatMessages.appendChild(userMessage);
+                
+                // Add bot thinking message
+                const botThinking = document.createElement('div');
+                botThinking.className = 'message bot-message thinking';
+                botThinking.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Thinking...</p>`;
+                chatMessages.appendChild(botThinking);
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Send to server
+                const formData = new FormData();
+                formData.append('question', question);
+                formData.append('internship_id', '{{ internship.id }}');
+                formData.append('task_id', '{{ task.id }}');
+                
+                fetch('{{ url_for("ask_supervisor") }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove thinking message
+                    chatMessages.removeChild(botThinking);
+                    
+                    // Add bot response
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'message bot-message';
+                    
+                    if (data.error) {
+                        botMessage.innerHTML = `<p>Sorry, I encountered an error. Please try again.</p>`;
+                    } else {
+                        botMessage.innerHTML = `<p>${data.response}</p>`;
+                    }
+                    
+                    chatMessages.appendChild(botMessage);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => {
+                    // Remove thinking message
+                    chatMessages.removeChild(botThinking);
+                    
+                    // Add error message
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'message bot-message error';
+                    errorMessage.innerHTML = `<p>Sorry, I encountered an error. Please try again.</p>`;
+                    chatMessages.appendChild(errorMessage);
+                    
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    console.error('Error:', error);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

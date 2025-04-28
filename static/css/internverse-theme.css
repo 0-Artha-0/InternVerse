@@ -1,0 +1,504 @@
+/* InternVerse Theme for Virtual Internship Simulator
+   Adapting the styling from the provided example */
+
+:root {
+    /* Color palette from the provided example */
+    --blue: #45a6ff;
+    --light-blue: #a8d5ff;
+    --peach: #ffe8d1;
+    --orange: #ff914d;
+    --dark: #333333;
+    --white: #ffffff;
+    --light-gray: #f5f5f5;
+    --gray: #6c757d;
+}
+
+/* Typography Enhancements */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--dark);
+    line-height: 1.6;
+    background-color: var(--white);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    color: var(--blue);
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: var(--blue) !important;
+    border-color: var(--blue) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.8rem 1.5rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    background-color: #3a8ad9 !important;
+}
+
+.btn-secondary {
+    background-color: var(--orange) !important;
+    border-color: var(--orange) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 0.8rem 1.5rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    background-color: #ea8344 !important;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--blue) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.navbar-brand {
+    font-size: 1.6rem !important;
+    font-weight: 700 !important;
+    color: var(--white) !important;
+}
+
+.navbar-brand span {
+    color: var(--peach) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500 !important;
+    transition: color 0.3s !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--peach) !important;
+}
+
+/* Card Styling */
+.card {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.3s, box-shadow 0.3s !important;
+    border: none !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.card:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+    background-color: var(--blue) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border-bottom: none !important;
+}
+
+.card-title {
+    font-weight: 600 !important;
+    color: var(--blue) !important;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    background-color: white !important;
+    color: var(--dark) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.3s, box-shadow 0.3s !important;
+    border: none !important;
+    margin-bottom: 1.5rem !important;
+    padding: 1.5rem !important;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Industry Cards */
+.industry-card {
+    background-color: var(--light-blue) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.industry-card:hover {
+    transform: scale(1.05) !important;
+    background-color: var(--blue) !important;
+    color: white !important;
+}
+
+.industry-card:hover .card-title {
+    color: white !important;
+}
+
+.industry-icon {
+    font-size: 2.5rem !important;
+    margin-bottom: 1rem !important;
+    color: var(--orange) !important;
+}
+
+.industry-card:hover .industry-icon {
+    color: var(--peach) !important;
+}
+
+/* Task Cards */
+.task-card {
+    border-left: 4px solid var(--blue) !important;
+    transition: all 0.3s ease !important;
+}
+
+.task-card:hover {
+    border-left: 4px solid var(--orange) !important;
+}
+
+.task-difficulty-easy {
+    color: #28a745 !important;
+}
+
+.task-difficulty-medium {
+    color: #ffc107 !important;
+}
+
+.task-difficulty-hard {
+    color: #dc3545 !important;
+}
+
+/* Badges */
+.badge-primary {
+    background-color: var(--blue) !important;
+    color: white !important;
+}
+
+.badge-secondary {
+    background-color: var(--orange) !important;
+    color: white !important;
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.badge-warning {
+    background-color: #ffc107 !important;
+    color: var(--dark) !important;
+}
+
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+/* Page Headers */
+.page-header {
+    padding: 2rem 0 !important;
+    background-color: var(--light-blue) !important;
+    margin-bottom: 2rem !important;
+}
+
+.page-header h1 {
+    color: var(--blue) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Footer */
+footer {
+    background-color: var(--blue) !important;
+    color: white !important;
+    padding: 3rem 0 !important;
+    margin-top: 3rem !important;
+}
+
+footer h5 {
+    color: white !important;
+    margin-bottom: 1.5rem !important;
+    font-size: 1.2rem !important;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-decoration: none !important;
+    transition: color 0.3s !important;
+}
+
+footer a:hover {
+    color: var(--peach) !important;
+    text-decoration: none !important;
+}
+
+.footer-bottom {
+    margin-top: 2rem !important;
+    padding-top: 2rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    text-align: center !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Form Controls */
+.form-control {
+    border-radius: 8px !important;
+    padding: 0.8rem 1rem !important;
+    border: 1px solid #ced4da !important;
+}
+
+.form-control:focus {
+    border-color: var(--blue) !important;
+    box-shadow: 0 0 0 0.2rem rgba(69, 166, 255, 0.25) !important;
+}
+
+.form-label {
+    font-weight: 500 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* Profile and User Elements */
+.profile-header {
+    background-color: var(--light-blue) !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.profile-avatar {
+    width: 120px !important;
+    height: 120px !important;
+    border-radius: 50% !important;
+    background-color: var(--blue) !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 3rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Supervisor Chat */
+.chat-container {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.chat-header {
+    background-color: var(--blue) !important;
+    color: white !important;
+    padding: 1rem !important;
+}
+
+.chat-messages {
+    height: 400px !important;
+    overflow-y: auto !important;
+    padding: 1rem !important;
+    background-color: #f8f9fa !important;
+}
+
+.message {
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    border-radius: 12px !important;
+    max-width: 75% !important;
+}
+
+.message-user {
+    background-color: var(--blue) !important;
+    color: white !important;
+    margin-left: auto !important;
+}
+
+.message-supervisor {
+    background-color: #e9ecef !important;
+    color: var(--dark) !important;
+}
+
+.chat-input {
+    padding: 1rem !important;
+    background-color: white !important;
+    border-top: 1px solid #dee2e6 !important;
+}
+
+/* Certificate Design */
+.certificate {
+    background-color: white !important;
+    border: 8px solid var(--blue) !important;
+    padding: an3remin !important;
+    text-align: center !important;
+    position: relative !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.certificate:before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    border: 1px solid var(--orange) !important;
+    margin: 1rem !important;
+    pointer-events: none !important;
+}
+
+.certificate h1 {
+    color: var(--blue) !important;
+    font-size: 2.5rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.certificate .signature {
+    margin-top: 3rem !important;
+    font-style: italic !important;
+}
+
+/* Fix for Tabs and Pills */
+.nav-tabs .nav-link {
+    color: var(--gray) !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--blue) !important;
+    font-weight: 600 !important;
+    border-bottom: none !important;
+}
+
+.nav-pills .nav-link {
+    color: var(--gray) !important;
+    border-radius: 8px !important;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--blue) !important;
+    color: white !important;
+}
+
+/* Dashboard Stats */
+.stats-card {
+    background-color: white !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+    text-align: center !important;
+    height: 100% !important;
+}
+
+.stats-icon {
+    font-size: 2rem !important;
+    margin-bottom: 1rem !important;
+    color: var(--blue) !important;
+}
+
+.stats-number {
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    color: var(--dark) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.stats-label {
+    color: var(--gray) !important;
+    font-size: 1rem !important;
+}
+
+/* Progress Bars */
+.progress {
+    height: 1rem !important;
+    border-radius: 0.5rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.progress-bar {
+    background-color: var(--blue) !important;
+    border-radius: 0.5rem !important;
+}
+
+/* Timeline */
+.timeline {
+    position: relative !important;
+    padding: 1rem 0 !important;
+}
+
+.timeline:before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 1rem !important;
+    width: 2px !important;
+    background-color: var(--light-blue) !important;
+}
+
+.timeline-item {
+    position: relative !important;
+    padding-left: 3rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.timeline-dot {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0.25rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    border-radius: 50% !important;
+    background-color: var(--blue) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+}
+
+.timeline-content {
+    background-color: white !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Responsive fixes */
+@media (max-width: 768px) {
+    .btn {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .stats-number {
+        font-size: 2rem !important;
+    }
+    
+    .timeline:before {
+        left: 0.5rem !important;
+    }
+    
+    .timeline-item {
+        padding-left: 2.5rem !important;
+    }
+    
+    .timeline-dot {
+        width: 1.5rem !important;
+        height: 1.5rem !important;
+    }
+}

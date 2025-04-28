@@ -1,0 +1,235 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard | Virtual Internship Simulator{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Welcome, {{ current_user.username }}!</h1>
+        <a href="{{ url_for('industries') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle me-2"></i> Start New Internship
+        </a>
+    </div>
+    
+    <div class="row">
+        <!-- Left Column: Stats and Active Internships -->
+        <div class="col-lg-8">
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card rounded">
+                        <div class="stats-card-body">
+                            <div>
+                                <div class="stats-count">{{ active_internships|length }}</div>
+                                <div class="stats-label">Active Internships</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card rounded">
+                        <div class="stats-card-body">
+                            <div>
+                                <div class="stats-count">{{ completed_internships|length }}</div>
+                                <div class="stats-label">Completed Internships</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card rounded">
+                        <div class="stats-card-body">
+                            <div>
+                                <div class="stats-count">{{ certificates|length }}</div>
+                                <div class="stats-label">Certificates Earned</div>
+                            </div>
+                            <div class="stats-icon">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Internships -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-briefcase me-2"></i> Active Internships</h5>
+                </div>
+                <div class="card-body">
+                    {% if active_internships %}
+                        {% for internship in active_internships %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0">{{ internship.title }}</h5>
+                                        <span class="badge bg-primary">Week {{ ((internship.progress / 100) * internship.duration_weeks)|round(0, 'ceil')|int }} of {{ internship.duration_weeks }}</span>
+                                    </div>
+                                    <p class="text-muted small mb-2">
+                                        Started on: {% if internship.started_at %}{{ internship.started_at.strftime('%B %d, %Y') }}{% else %}Recently{% endif %}
+                                    </p>
+                                    <div class="progress mb-3" style="height: 10px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ internship.progress }}%;" 
+                                             aria-valuenow="{{ internship.progress }}" aria-valuemin="0" aria-valuemax="100">
+                                             {{ internship.progress }}%
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ url_for('internship_detail', internship_id=internship.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-tasks me-1"></i> View Tasks
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-laptop-code fa-3x mb-3 text-muted"></i>
+                            <p class="mb-3">You don't have any active internships yet.</p>
+                            <a href="{{ url_for('industries') }}" class="btn btn-primary">
+                                Start Your First Internship
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Pending Tasks -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i> Pending Tasks</h5>
+                </div>
+                <div class="card-body">
+                    {% if pending_tasks %}
+                        {% for task in pending_tasks %}
+                            <div class="card task-card {{ task.difficulty }} mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0">{{ task.title }}</h5>
+                                        <span class="task-status bg-{{ 'warning' if task.status == 'in_progress' else 'secondary' }}">
+                                            {{ task.status.replace('_', ' ').title() }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-2">{{ task.description }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-hourglass-half me-1"></i> 
+                                            Due: {% if task.deadline %}{{ task.deadline.strftime('%B %d, %Y') }}{% else %}No deadline{% endif %}
+                                        </small>
+                                        <div>
+                                            <span class="badge bg-{{ 'success' if task.difficulty == 'easy' else 'warning' if task.difficulty == 'medium' else 'danger' }}">
+                                                {{ task.difficulty.title() }}
+                                            </span>
+                                            <span class="badge bg-info">{{ task.points }} Points</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <a href="{{ url_for('task_detail', task_id=task.id) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-arrow-right me-1"></i> Work on Task
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                            <p class="text-muted">You don't have any pending tasks at the moment.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Certificates and Progress -->
+        <div class="col-lg-4">
+            <!-- Certificates -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-certificate me-2"></i> Certificates</h5>
+                </div>
+                <div class="card-body">
+                    {% if certificates %}
+                        {% for certificate in certificates %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="mb-2">{{ certificate.title }}</h6>
+                                    <p class="small text-muted mb-2">Issued: {% if certificate.issued_at %}{{ certificate.issued_at.strftime('%B %d, %Y') }}{% else %}Recently{% endif %}</p>
+                                    <p class="small mb-3">{{ certificate.description[:100] }}...</p>
+                                    <div class="d-flex justify-content-end">
+                                        <a href="{{ url_for('view_certificate', certificate_id=certificate.id) }}" class="btn btn-sm btn-primary">
+                                            View Certificate
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-award fa-3x mb-3 text-muted"></i>
+                            <p class="text-muted">Complete internships to earn certificates.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Progress Chart -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i> Your Progress</h5>
+                </div>
+                <div class="card-body">
+                    {% if active_internships %}
+                        <canvas id="userProgressChart" 
+                                data-weeks="['Week 1', 'Week 2', 'Week 3', 'Week 4']" 
+                                data-progress="[25, 40, 60, 75]" 
+                                height="200"></canvas>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-line fa-3x mb-3 text-muted"></i>
+                            <p class="text-muted">Start an internship to track your progress.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i> Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    {% if active_internships %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-info-circle fa-2x mb-3 text-primary"></i>
+                            <p class="text-muted mb-2">Each internship has its own dedicated AI supervisor.</p>
+                            <p class="text-muted">Go to your internship to chat with your AI supervisor!</p>
+                            
+                            {% if active_internships|length > 0 %}
+                            <a href="{{ url_for('internship_detail', internship_id=active_internships[0].id) }}" class="btn btn-primary mt-2">
+                                <i class="fas fa-robot me-2"></i> Go to Internship
+                            </a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-circle fa-2x mb-3 text-warning"></i>
+                            <p class="text-muted">Start an internship to access your AI supervisor.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

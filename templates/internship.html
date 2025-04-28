@@ -1,0 +1,227 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ internship.title }} | InternVerse{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Internship Header -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <h2 class="mb-0">{{ internship.title }}</h2>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteInternshipModal">
+                    <i class="fas fa-trash-alt me-2"></i> Delete Internship
+                </button>
+            </div>
+            
+            <div class="d-flex align-items-center mb-3">
+                <span class="badge bg-primary me-2">{{ industry.name }}</span>
+                {% if internship.status == 'active' %}
+                <span class="badge bg-success me-2">Active</span>
+                {% elif internship.status == 'completed' %}
+                <span class="badge bg-info me-2">Completed</span>
+                {% elif internship.status == 'abandoned' %}
+                <span class="badge bg-warning me-2">Abandoned</span>
+                {% endif %}
+                
+                <div class="ms-auto text-muted small">
+                    Started: {% if internship.started_at %}{{ internship.started_at.strftime('%b %d, %Y') }}{% else %}Recently{% endif %}
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="progress" style="height: 10px;">
+                    <div class="progress-bar" role="progressbar" style="width: {{ internship.progress }}%;" 
+                         aria-valuenow="{{ internship.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                    <small>Progress: {{ internship.progress|int }}%</small>
+                    <small>Duration: {{ internship.duration_weeks }} weeks</small>
+                </div>
+            </div>
+            
+            <p>{{ internship.description }}</p>
+            
+            <div class="row mt-4">
+                {% if company %}
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Company</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ company.name }}</h6>
+                            <p class="card-text small">{{ company.description }}</p>
+                            {% if company.location %}
+                            <div class="small text-muted">
+                                <i class="bi bi-geo-alt"></i> {{ company.location }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if role %}
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Role</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ role.name }}</h6>
+                            <p class="card-text small">{{ role.description }}</p>
+                            {% if role.skills_required %}
+                            <div class="small">
+                                <strong>Skills:</strong> {{ role.skills_required }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">AI Supervisor</h5>
+                </div>
+                <div class="card-body">
+                    <p>Your AI supervisor is here to help you succeed. Ask any questions about your internship tasks or career guidance.</p>
+                    
+                    <form id="askForm" class="mt-3">
+                        <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                        <div class="form-group mb-2">
+                            <textarea class="form-control" id="question" name="question" rows="3" placeholder="Ask your supervisor a question..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ask Question</button>
+                    </form>
+                    
+                    <div id="responseArea" class="mt-3 p-3 border rounded d-none">
+                        <h6>Supervisor Response:</h6>
+                        <div id="responseText"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tasks Section -->
+    <div class="mt-5">
+        <h3 class="mb-4">Internship Tasks</h3>
+        
+        {% if tasks %}
+        <div class="task-list">
+            {% for task in tasks %}
+            <div class="card mb-3 task-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="card-title">{{ task.title }}</h5>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge {% if task.difficulty == 'easy' %}bg-success{% elif task.difficulty == 'medium' %}bg-warning{% else %}bg-danger{% endif %} me-2">
+                                    {{ task.difficulty|capitalize }}
+                                </span>
+                                <span class="badge bg-primary me-2">{{ task.points }} pts</span>
+                                
+                                <span class="badge {% if task.status == 'pending' %}bg-secondary{% elif task.status == 'in_progress' %}bg-info{% elif task.status == 'submitted' %}bg-warning{% elif task.status == 'evaluated' %}bg-success{% endif %} me-2">
+                                    {{ task.status|replace('_', ' ')|capitalize }}
+                                </span>
+                                
+                                {% if task.deadline %}
+                                <small class="text-muted ms-2">
+                                    Due: {% if task.deadline %}{{ task.deadline.strftime('%b %d, %Y') }}{% else %}No deadline{% endif %}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <a href="{{ url_for('task_detail', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">
+                            {% if task.status == 'pending' %}
+                            Start Task
+                            {% elif task.status == 'in_progress' %}
+                            Continue Task
+                            {% elif task.status == 'submitted' or task.status == 'evaluated' %}
+                            View Submission
+                            {% endif %}
+                        </a>
+                    </div>
+                    
+                    <p class="card-text">{{ task.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No tasks have been assigned yet. Check back soon!
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Space for additional sections -->
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteInternshipModal" tabindex="-1" aria-labelledby="deleteInternshipModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteInternshipModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this internship? This action cannot be undone.</p>
+                    <p class="text-danger"><strong>All tasks and submissions associated with this internship will also be deleted.</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="{{ url_for('internship_detail', internship_id=internship.id) }}">
+                        <input type="hidden" name="action" value="delete_internship">
+                        <button type="submit" class="btn btn-danger">Delete Internship</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block page_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const askForm = document.getElementById('askForm');
+        const responseArea = document.getElementById('responseArea');
+        const responseText = document.getElementById('responseText');
+        
+        askForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(askForm);
+            const question = formData.get('question');
+            
+            if (!question || question.trim() === '') {
+                return;
+            }
+            
+            // Show loading state
+            responseArea.classList.remove('d-none');
+            responseText.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Thinking...';
+            
+            // Send request to supervisor
+            fetch('{{ url_for("ask_supervisor") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    responseText.textContent = 'Sorry, I encountered an error. Please try again later.';
+                } else {
+                    responseText.textContent = data.response;
+                }
+            })
+            .catch(error => {
+                responseText.textContent = 'Sorry, I encountered an error. Please try again later.';
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

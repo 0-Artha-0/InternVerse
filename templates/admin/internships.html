@@ -1,0 +1,303 @@
+{% extends "layout.html" %}
+
+{% block title %}Internship Management | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-briefcase me-2"></i> Internship Management</h2>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exportModal">
+                <i class="fas fa-file-export me-1"></i> Export
+            </button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createIndustryModal">
+                <i class="fas fa-plus me-1"></i> Add Industry
+            </button>
+        </div>
+    </div>
+    
+    <!-- Admin Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                <i class="fas fa-home me-1"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_analytics') }}">
+                <i class="fas fa-chart-bar me-1"></i> Analytics
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('admin_users') }}">
+                <i class="fas fa-users me-1"></i> Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('admin_internships') }}">
+                <i class="fas fa-briefcase me-1"></i> Internships
+            </a>
+        </li>
+    </ul>
+    
+    <!-- Industry Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-coins fa-3x text-primary"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-1">Fintech</h5>
+                            <p class="card-text mb-0">Active Internships: 28</p>
+                            <p class="card-text">Completed: 45</p>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-heartbeat fa-3x text-danger"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-1">Healthcare</h5>
+                            <p class="card-text mb-0">Active Internships: 22</p>
+                            <p class="card-text">Completed: 31</p>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-chart-line fa-3x text-success"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-1">Marketing</h5>
+                            <p class="card-text mb-0">Active Internships: 18</p>
+                            <p class="card-text">Completed: 29</p>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters and Search -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search internships..." aria-label="Search internships">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Filter by industry">
+                        <option selected>All Industries</option>
+                        <option value="fintech">Fintech</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="marketing">Marketing</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" aria-label="Filter by status">
+                        <option selected>All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="abandoned">Abandoned</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Internships Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Internship Title</th>
+                            <th>Industry</th>
+                            <th>Student</th>
+                            <th>Duration</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Started</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for internship in internships %}
+                        <tr>
+                            <td>{{ internship.id }}</td>
+                            <td>{{ internship.title }}</td>
+                            <td>{{ internship.industry.name }}</td>
+                            <td>{{ internship.user.username }}</td>
+                            <td>{{ internship.duration_weeks }} weeks</td>
+                            <td>
+                                <div class="progress" style="height: 5px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ internship.progress }}%;" 
+                                        aria-valuenow="{{ internship.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small>{{ internship.progress }}%</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if internship.status == 'completed' else 'primary' if internship.status == 'active' else 'secondary' }}">
+                                    {{ internship.status.title() }}
+                                </span>
+                            </td>
+                            <td>{{ internship.started_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="actionDropdown{{ internship.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="actionDropdown{{ internship.id }}">
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> View Details</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-tasks me-2"></i> Manage Tasks</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-envelope me-2"></i> Contact Student</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash-alt me-2"></i> Delete</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Export Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exportModalLabel">Export Internship Data</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Export Format</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="exportFormat" id="formatCSV" value="csv" checked>
+                                <label class="form-check-label" for="formatCSV">CSV</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="exportFormat" id="formatExcel" value="excel">
+                                <label class="form-check-label" for="formatExcel">Excel</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Filter By</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterActive" checked>
+                                <label class="form-check-label" for="filterActive">Active Internships</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterCompleted" checked>
+                                <label class="form-check-label" for="filterCompleted">Completed Internships</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterAbandoned">
+                                <label class="form-check-label" for="filterAbandoned">Abandoned Internships</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateRange" class="form-label">Date Range</label>
+                            <select class="form-select" id="dateRange">
+                                <option value="all" selected>All Time</option>
+                                <option value="30days">Last 30 Days</option>
+                                <option value="90days">Last 90 Days</option>
+                                <option value="year">Last Year</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Industry Modal -->
+    <div class="modal fade" id="createIndustryModal" tabindex="-1" aria-labelledby="createIndustryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createIndustryModalLabel">Add New Industry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="industryName" class="form-label">Industry Name</label>
+                            <input type="text" class="form-control" id="industryName" placeholder="e.g., Technology">
+                        </div>
+                        <div class="mb-3">
+                            <label for="industryDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="industryDescription" rows="4" placeholder="Describe this industry and the skills students will develop"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="industryIcon" class="form-label">Icon (Font Awesome)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">fa-</span>
+                                <input type="text" class="form-control" id="industryIcon" placeholder="e.g., code">
+                            </div>
+                            <div class="form-text">Enter a Font Awesome icon name without the "fa-" prefix.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Add Industry</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

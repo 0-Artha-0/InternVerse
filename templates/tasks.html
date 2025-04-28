@@ -1,0 +1,163 @@
+{% extends "layout.html" %}
+
+{% block title %}Internship Tasks | Virtual Internship Simulator{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>{{ internship.title }}</h1>
+                <span class="badge bg-primary p-2 fs-6">Week {{ ((internship.progress / 100) * internship.duration_weeks)|round(0, 'ceil')|int }} of {{ internship.duration_weeks }}</span>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Internship Description</h5>
+                    <p>{{ internship.description }}</p>
+                    <div class="progress mt-3 mb-2" style="height: 15px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ internship.progress }}%;" 
+                             aria-valuenow="{{ internship.progress }}" aria-valuemin="0" aria-valuemax="100">
+                             {{ internship.progress }}%
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">Progress: {{ internship.progress }}%</small>
+                        <small class="text-muted">Started: {{ internship.started_at.strftime('%B %d, %Y') }}</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-tasks me-2"></i> Tasks</h5>
+                    <div>
+                        <select id="task-filter" class="form-select form-select-sm">
+                            <option value="all">All Tasks</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="submitted">Submitted</option>
+                            <option value="evaluated">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if tasks %}
+                        {% for task in tasks %}
+                            <div class="card task-card {{ task.difficulty }} mb-3 task-item" data-status="{{ task.status }}">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0">{{ task.title }}</h5>
+                                        <span class="task-status badge bg-{{ 'success' if task.status == 'evaluated' else 'warning' if task.status == 'in_progress' or task.status == 'submitted' else 'secondary' }}">
+                                            {{ task.status.replace('_', ' ').title() }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-2">{{ task.description }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-hourglass-half me-1"></i> 
+                                            Due: {{ task.deadline.strftime('%B %d, %Y') }}
+                                        </small>
+                                        <div>
+                                            <span class="badge bg-{{ 'success' if task.difficulty == 'easy' else 'warning' if task.difficulty == 'medium' else 'danger' }}">
+                                                {{ task.difficulty.title() }}
+                                            </span>
+                                            <span class="badge bg-info">{{ task.points }} Points</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <a href="{{ url_for('task_detail', task_id=task.id) }}" class="btn btn-sm btn-primary">
+                                            {% if task.status == 'evaluated' %}
+                                                <i class="fas fa-eye me-1"></i> View Result
+                                            {% else %}
+                                                <i class="fas fa-arrow-right me-1"></i> Work on Task
+                                            {% endif %}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-tasks fa-3x mb-3 text-muted"></i>
+                            <p class="text-muted">Your tasks are being generated. Please check back in a few moments.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: AI Supervisor and Resources -->
+        <div class="col-lg-4">
+            <!-- AI Supervisor Chat -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-robot me-2"></i> AI Supervisor</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="ai-supervisor-chat" class="chat-container" data-internship-id="{{ internship.id }}">
+                        <div id="chat-messages" class="chat-messages">
+                            <!-- Messages will be added here by JavaScript -->
+                        </div>
+                        <div class="chat-input-container">
+                            <form id="chat-form" class="d-flex">
+                                <input type="text" id="chat-input" class="form-control" placeholder="Ask your AI supervisor a question...">
+                                <button type="submit" class="btn btn-primary ms-2">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Internship Details -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Internship Details</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Industry
+                            <span class="badge bg-primary rounded-pill">{{ internship.industry.name }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Duration
+                            <span>{{ internship.duration_weeks }} Weeks</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Tasks
+                            <span>{{ tasks|length }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Completed Tasks
+                            <span>{{ tasks|selectattr('status', 'equalto', 'evaluated')|list|length }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Tips Box -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i> Tips for Success</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="mb-0">
+                        <li class="mb-2">Complete tasks in the suggested order for optimal learning.</li>
+                        <li class="mb-2">Read all task instructions carefully before beginning your work.</li>
+                        <li class="mb-2">Use the AI Supervisor for guidance if you're stuck on a task.</li>
+                        <li class="mb-2">Submit thorough, well-structured work to receive better feedback.</li>
+                        <li>Review feedback from previous tasks to improve future submissions.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
