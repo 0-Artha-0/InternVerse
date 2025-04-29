@@ -23,7 +23,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="bi bi-laptop me-2"></i>
-                <img src="logo.jpg" height='50px'>
+                <img src="{{ url_for('static', filename='css/logo.jpg') }}" alt="Logo">
+" height='50px'>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
