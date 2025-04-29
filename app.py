@@ -33,13 +33,13 @@ app.config["AZURE_OPENAI_DEPLOYMENT"] = os.environ.get("AZURE_OPENAI_DEPLOYMENT"
 app.config["AZURE_OPENAI_API_VERSION"] = os.environ.get("AZURE_OPENAI_API_VERSION", "2023-12-01-preview")
 
 # Standard OpenAI configuration (fallback)
-app.config["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
-app.config["OPENAI_MODEL"] = os.environ.get("OPENAI_MODEL", "gpt-4o")
+# app.config["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
+# app.config["OPENAI_MODEL"] = os.environ.get("OPENAI_MODEL", "gpt-4o")
 
 # Azure Cosmos DB configuration
 app.config["COSMOS_ENDPOINT"] = os.environ.get("COSMOS_ENDPOINT")
 app.config["COSMOS_KEY"] = os.environ.get("COSMOS_KEY")
-app.config["COSMOS_DATABASE"] = os.environ.get("COSMOS_DATABASE", "internship-simulator")
+app.config["COSMOS_DATABASE"] = os.environ.get("COSMOS_DATABASE", "InternVerseDatabase")
 
 # Azure AI Search configuration
 app.config["AZURE_SEARCH_ENDPOINT"] = os.environ.get("AZURE_SEARCH_ENDPOINT")
