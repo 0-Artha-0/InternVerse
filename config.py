@@ -23,8 +23,8 @@ AZURE_OPENAI_DEPLOYMENT = "gpt-4o"
 AZURE_OPENAI_API_VERSION = "2023-12-01-preview"  # Use a version compatible with the current Azure OpenAI SDK
 
 # Standard OpenAI configuration (fallback)
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-OPENAI_MODEL = "gpt-4o"  # The newest OpenAI model is "gpt-4o" which was released May 13, 2024
+# OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+# OPENAI_MODEL = "gpt-4o"  # The newest OpenAI model is "gpt-4o" which was released May 13, 2024
 
 # Azure Cosmos DB configuration
 COSMOS_ENDPOINT = os.environ.get("COSMOS_ENDPOINT")
