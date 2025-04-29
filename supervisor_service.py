@@ -6,7 +6,8 @@ This file handles all communications with the OpenAI API.
 import json
 import logging
 from app import app
-from openai import OpenAI, AzureOpenAI
+# from openai import OpenAI
+from openai import AzureOpenAI
 from supervisor_prompts import (
     get_task_generation_prompt,
     get_feedback_prompt,
@@ -34,18 +35,18 @@ def init_openai_client():
             # Fall back to standard OpenAI below
     
     # Try standard OpenAI API if Azure failed or not configured
-    if app.config.get("OPENAI_API_KEY"):
-        try:
+    # if app.config.get("OPENAI_API_KEY"):
+        #try:
             # Create standard OpenAI client
-            client = OpenAI(api_key=app.config["OPENAI_API_KEY"])
-            logging.info("AI Supervisor: Standard OpenAI client configured")
-            return client, "standard"
-        except Exception as e:
-            logging.error(f"AI Supervisor: Error configuring standard OpenAI client: {str(e)}")
-            return None, None
-    else:
-        logging.warning("AI Supervisor: No OpenAI credentials found. Using fallback responses.")
-        return None, None
+          #  client = OpenAI(api_key=app.config["OPENAI_API_KEY"])
+           # logging.info("AI Supervisor: Standard OpenAI client configured")
+           # return client, "standard"
+       # except Exception as e:
+           # logging.error(f"AI Supervisor: Error configuring standard OpenAI client: {str(e)}")
+           # return None, None
+   # else:
+      #  logging.warning("AI Supervisor: No OpenAI credentials found. Using fallback responses.")
+       # return None, None
 
 # Call this at application startup
 openai_client, openai_type = init_openai_client()
